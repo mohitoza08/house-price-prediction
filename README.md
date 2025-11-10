@@ -84,6 +84,8 @@ Target Variable: price
 Input Features: bedrooms, bathrooms, sqft_living, sqft_lot, floors, waterfront, view, condition, grade, year_built, zipcode, etc.
 
 📸 Screenshots
+[Screenshot 1](https://i.ibb.co/HDwL4RcC/S.png)
+[Screenshot 2](https://i.ibb.co/ccM7dBMT/s2.png)
 
 
 📦 Future Improvements
