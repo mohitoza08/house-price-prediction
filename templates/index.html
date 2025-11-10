@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>House Price Prediction</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #667eea;
+      --primary-light: #7c8fff;
+      --primary-dark: #5568d3;
+      --neutral-50: #f9fafb;
+      --neutral-100: #f3f4f6;
+      --neutral-200: #e5e7eb;
+      --neutral-400: #9ca3af;
+      --neutral-600: #4b5563;
+      --neutral-700: #374151;
+      --neutral-900: #111827;
+      --accent: #f59e0b;
+      --success: #10b981;
+      --error: #ef4444;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: var(--neutral-900);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 10px 20px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--primary) 0%, #764ba2 100%);
+      color: white;
+      padding: 40px 30px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin: 0;
+    }
+
+    .header p {
+      font-size: 16px;
+      opacity: 0.95;
+      margin-top: 8px;
+    }
+
+    .form-wrapper {
+      padding: 40px 30px;
+    }
+
+    .form-section {
+      margin-bottom: 40px;
+    }
+
+    .form-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--neutral-900);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 24px;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--neutral-700);
+      margin-bottom: 8px;
+      text-transform: capitalize;
+      letter-spacing: 0.3px;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      padding: 12px 16px;
+      border: 2px solid var(--neutral-200);
+      border-radius: 8px;
+      font-size: 15px;
+      transition: all 0.2s ease;
+      background: var(--neutral-50);
+      color: var(--neutral-900);
+      font-family: inherit;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    input[type="text"]::placeholder,
+    input[type="number"]::placeholder {
+      color: var(--neutral-400);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 16px;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 14px 32px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      letter-spacing: 0.3px;
+    }
+
+    button[type="submit"] {
+      background: linear-gradient(135deg, var(--primary) 0%, #764ba2 100%);
+      color: white;
+      padding: 14px 40px;
+      min-width: 150px;
+    }
+
+    button[type="submit"]:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(102, 126, 234, 0.35);
+    }
+
+    button[type="submit"]:active {
+      transform: translateY(0);
+    }
+
+    .result-section {
+      background: var(--neutral-50);
+      border: 2px solid var(--neutral-200);
+      border-radius: 8px;
+      padding: 24px;
+      margin-top: 32px;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .result-section h3 {
+      font-size: 18px;
+      color: var(--neutral-600);
+      margin: 0;
+    }
+
+    .result-section.filled {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+      border-color: var(--primary);
+    }
+
+    .result-section.filled h3 {
+      color: var(--primary);
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        padding: 30px 20px;
+      }
+
+      .header h1 {
+        font-size: 24px;
+      }
+
+      .form-wrapper {
+        padding: 24px 20px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🏡 Predict House Price</h1>
+      <p>Enter your property details to get an estimated price</p>
+    </div>
+
+    <form action="/predict" method="post" class="form-wrapper">
+     
+      
+      <div class="form-section">
+        <div class="section-title">Basic Properties</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="bedrooms">Bedrooms</label>
+            <input type="text" id="bedrooms" name="bedrooms" placeholder="e.g., 3">
+          </div>
+          <div class="form-group">
+            <label for="bathrooms">Bathrooms</label>
+            <input type="text" id="bathrooms" name="bathrooms" placeholder="e.g., 2.5">
+          </div>
+          <div class="form-group">
+            <label for="sqft_living">Sqft Living</label>
+            <input type="text" id="sqft_living" name="sqft_living" placeholder="e.g., 2000">
+          </div>
+          <div class="form-group">
+            <label for="sqft_lot">Sqft Lot</label>
+            <input type="text" id="sqft_lot" name="sqft_lot" placeholder="e.g., 5000">
+          </div>
+          <div class="form-group">
+            <label for="floors">Floors</label>
+            <input type="text" id="floors" name="floors" placeholder="e.g., 2">
+          </div>
+          <div class="form-group">
+            <label for="waterfront">Waterfront</label>
+            <input type="text" id="waterfront" name="waterfront" placeholder="0 or 1">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-title">Property Qualities</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="view">View</label>
+            <input type="text" id="view" name="view" placeholder="0-4">
+          </div>
+          <div class="form-group">
+            <label for="condition">Condition</label>
+            <input type="text" id="condition" name="condition" placeholder="1-5">
+          </div>
+          <div class="form-group">
+            <label for="grade">Grade</label>
+            <input type="text" id="grade" name="grade" placeholder="3-13">
+          </div>
+          <div class="form-group">
+            <label for="sqft_above">Sqft Above</label>
+            <input type="text" id="sqft_above" name="sqft_above" placeholder="e.g., 2000">
+          </div>
+          <div class="form-group">
+            <label for="sqft_basement">Sqft Basement</label>
+            <input type="text" id="sqft_basement" name="sqft_basement" placeholder="e.g., 0">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-title">Year & Location</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="yr_built">Year Built</label>
+            <input type="text" id="yr_built" name="yr_built" placeholder="e.g., 2005">
+          </div>
+          <div class="form-group">
+            <label for="yr_renovated">Year Renovated</label>
+            <input type="text" id="yr_renovated" name="yr_renovated" placeholder="e.g., 0">
+          </div>
+          <div class="form-group">
+            <label for="zipcode">Zipcode</label>
+            <input type="text" id="zipcode" name="zipcode" placeholder="e.g., 98001">
+          </div>
+          <div class="form-group">
+            <label for="lat">Latitude</label>
+            <input type="text" id="lat" name="lat" placeholder="e.g., 47.5">
+          </div>
+          <div class="form-group">
+            <label for="long">Longitude</label>
+            <input type="text" id="long" name="long" placeholder="e.g., -122.3">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-title">Neighborhood (15yr)</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="sqft_living15">Sqft Living15</label>
+            <input type="text" id="sqft_living15" name="sqft_living15" placeholder="e.g., 1900">
+          </div>
+          <div class="form-group">
+            <label for="sqft_lot15">Sqft Lot15</label>
+            <input type="text" id="sqft_lot15" name="sqft_lot15" placeholder="e.g., 5000">
+          </div>
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button type="submit">Predict Price</button>
+      </div>
+
+      <div class="result-section">
+        <h3>{{ result }}</h3>
+      </div>
+    </form>
+  </div>
+  <script>
+document.addEventListener("DOMContentLoaded", function() {
+  const resultSection = document.querySelector(".result-section");
+  if (resultSection && resultSection.textContent.trim() !== "") {
+    resultSection.scrollIntoView({ behavior: "smooth" });
+  }
+});
+</script>
+
+</body>
+</html>
